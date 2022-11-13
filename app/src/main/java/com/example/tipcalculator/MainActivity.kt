@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tipcalculator.components.InputTextField
 import com.example.tipcalculator.components.IconButton
+import com.example.tipcalculator.logic.totalTipCalculation
 import com.example.tipcalculator.ui.theme.TipCalculatorTheme
 
 class MainActivity : ComponentActivity() {
@@ -73,7 +74,8 @@ fun TopContent(
 
     Surface(modifier = Modifier
         .fillMaxWidth()
-        .height(200.dp)
+        .height(180.dp)
+        .padding(start = 10.dp, end = 10.dp)
         .clip(shape = CircleShape.copy(CornerSize(12.dp)))) {
 
         Row(
@@ -88,7 +90,7 @@ fun TopContent(
                 Text(
                     text = "Bill: ",
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Normal
+                    fontWeight = FontWeight.Light
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -96,7 +98,7 @@ fun TopContent(
                 Text(
                     text = "Tip: ",
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Normal
+                    fontWeight = FontWeight.Light
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -104,7 +106,7 @@ fun TopContent(
                 Text(
                     text = "Split: ",
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Normal
+                    fontWeight = FontWeight.Light
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -124,7 +126,7 @@ fun TopContent(
                 Text(
                     text = "$ $billD",
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Normal
+                    fontWeight = FontWeight.Light
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -132,7 +134,7 @@ fun TopContent(
                 Text(
                     text = "$ $tipD",
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Normal
+                    fontWeight = FontWeight.Light
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -140,7 +142,7 @@ fun TopContent(
                 Text(
                     text = "0",
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Normal
+                    fontWeight = FontWeight.Light
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -172,7 +174,7 @@ fun UserForm(
     onValueChange: (String) -> Unit = {}
 ) {
     var bill = remember {
-        mutableStateOf("")
+        mutableStateOf("0.0")
     }
 
     val isBillValid = remember(bill.value) {
@@ -180,7 +182,17 @@ fun UserForm(
     }
 
     var split by remember {
-        mutableStateOf(0)
+        mutableStateOf(1)
+    }
+
+    var tipSlider by remember {
+        mutableStateOf(0f)
+    }
+
+    var tipPercentage = (tipSlider * 100).toInt()
+
+    var tipAmount by remember {
+        mutableStateOf(0.0)
     }
 
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -213,7 +225,11 @@ fun UserForm(
                 }
             )
 
-            if (isBillValid) {
+            if (true) {
+
+                //SPLIT
+                
+                Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
                     text = "SPLIT",
@@ -268,9 +284,46 @@ fun UserForm(
                         }
                     )
                 }
+                
+                Spacer(modifier = Modifier.height(20.dp))
 
-            } else {
+                //TIP
 
+                Text(
+                    text = "TIP",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Light,
+                    modifier = Modifier.padding(start = 10.dp)
+                )
+
+                Text(
+                    text = "$$tipAmount",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier
+                        .padding(end = 10.dp)
+                        .align(Alignment.End)
+                )
+
+                Text(
+                    text = "$tipPercentage%",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier
+                        .padding(end = 10.dp)
+                        .align(Alignment.End)
+                )
+
+                Slider(
+                    value = tipSlider,
+                    onValueChange = { value ->
+                        Log.d("SliderState", "Slider value: $value ")
+                        tipSlider = value
+
+                        tipAmount = totalTipCalculation(bill.value.toDouble(), tipPercentage)
+                    },
+                    modifier = Modifier.padding(start = 10.dp, end = 10.dp)
+                )
             }
 
 
@@ -279,8 +332,6 @@ fun UserForm(
         }
     }
 }
-
-
 
 
 //@Preview(showBackground = true)
