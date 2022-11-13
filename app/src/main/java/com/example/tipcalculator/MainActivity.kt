@@ -38,12 +38,24 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MyApp() {
-    TopContent()
+    Column(modifier = Modifier.padding(20.dp)) {
+        TopContent()
+    }
 }
 
 @Preview
 @Composable
-fun TopContent() {
+fun TopContent(
+    bill: Double = 0.0,
+    tip: Double = 0.0,
+    split: Int = 0,
+    total: Double = 0.0
+) {
+
+    var billD = "%.2f".format(bill)
+    var tipD = "%.2f".format(tip)
+    var totalD = "%.2f".format(total)
+
     Surface(modifier = Modifier
         .fillMaxWidth()
         .height(200.dp)
@@ -53,67 +65,83 @@ fun TopContent() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier
-                .background(colorResource(id = R.color.pale_robin))
+                .background(colorResource(R.color.pale_robin))
         ) {
             Column(
                 horizontalAlignment = Alignment.End,
-                modifier = Modifier.padding(start = 10.dp)
             ) {
                 Text(
-                    text = "BILL: ",
+                    text = "Bill: ",
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.Normal
                 )
 
-                Spacer(modifier = Modifier.height(15.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = "TIP: ",
+                    text = "Tip: ",
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.Normal
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Text(
+                    text = "Split: ",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Normal
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
-                    text = "TOTAL: ",
+                    text = "Total: ",
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
             
             Spacer(modifier = Modifier.width(50.dp))
 
             Column(
-                horizontalAlignment = Alignment.Start,
-                modifier = Modifier.padding(start = 10.dp)
+                horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = "$ 00.0",
+                    text = "$ $billD",
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.Normal
                 )
 
-                Spacer(modifier = Modifier.height(15.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = "$ 00.0",
+                    text = "$ $tipD",
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.Normal
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Text(
+                    text = "0",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Normal
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
-                    text = "$ 00.0",
+                    text = "$ $totalD",
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
         }
-
     }
 }
+
+
+
 
 /*@Preview(showBackground = true)*/
 @Composable
