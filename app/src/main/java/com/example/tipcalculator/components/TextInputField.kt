@@ -1,5 +1,6 @@
 package com.example.tipcalculator.components
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
@@ -10,7 +11,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -47,6 +47,7 @@ fun InputTextField(
         keyboardActions = onAction,
         modifier = Modifier
             .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
+            .fillMaxWidth()
     )
     
 }
