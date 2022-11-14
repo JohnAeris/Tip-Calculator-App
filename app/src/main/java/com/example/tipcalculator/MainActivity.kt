@@ -7,7 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
@@ -58,37 +57,39 @@ fun MyApp() {
     }
 }
 
-@Preview
 @Composable
 fun TopContent(
     bill: String = "0.0",
-    tip: Double = 0.0,
-    split: Int = 1,
+    tip: String = "0.0",
+    split: Int = 0,
     individualAmount: Double = 0.0
 ) {
 
-    var tipD = "%.2f".format(tip)
-    //var totalD = "%.2f".format(total)
-
-    val billA = if (bill.isNullOrEmpty()) {
+    val individualAmountFinal = if (individualAmount.isInfinite() or individualAmount.isNaN()) {
+        0.0
+    } else {
+        individualAmount
+    }
+    val billAmount = if (bill.isEmpty()) {
         0.0
     } else {
         bill.toDouble()
     }
-
-    var total = billA + tip
+    val total = billAmount + tip.toDouble()
+    val totalFinal = "%.2f".format(total)
+    val billFinal = "%.2f".format(billAmount)
 
     Surface(modifier = Modifier
         .fillMaxWidth()
         .height(230.dp)
         .padding(start = 10.dp, end = 10.dp)
-        .clip(shape = CircleShape.copy(CornerSize(12.dp)))) {
-
+        .clip(shape = CircleShape.copy(CornerSize(12.dp))))
+    {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(5.dp),
-            modifier = Modifier.padding(10.dp)
-        ) {
+            modifier = Modifier.padding(10.dp))
+        {
             Text(
                 text = "TOTAL AMOUNT",
                 fontSize = 20.sp,
@@ -96,9 +97,10 @@ fun TopContent(
             )
             
             Text(
-                text = "$ $total",
+                text = "$ $totalFinal",
                 fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                maxLines = 1
             )
 
             Divider(thickness = 1.dp)
@@ -168,9 +170,10 @@ fun TopContent(
 
                 Column(verticalArrangement = Arrangement.Center) {
                     Text(
-                        text = "$$billA",
+                        text = "$$billFinal",
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Normal
+                        fontWeight = FontWeight.Normal,
+                        maxLines = 1
                     )
 
                     Spacer(modifier = Modifier.height(5.dp))
@@ -184,7 +187,7 @@ fun TopContent(
                     Spacer(modifier = Modifier.height(5.dp))
 
                     Text(
-                        text = "$$tipD",
+                        text = "$$tip",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal
                     )
@@ -192,7 +195,7 @@ fun TopContent(
                     Spacer(modifier = Modifier.height(5.dp))
 
                     Text(
-                        text = "$$individualAmount",
+                        text = "$$individualAmountFinal",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal
                     )
@@ -205,46 +208,27 @@ fun TopContent(
 @Composable
 fun BodyContent() {
 
-    UserForm() { bill ->
+    UserForm { bill ->
         Log.d("AMOUNT", "User's Input: $bill")
     }
 
 }
 
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun UserForm(
-    modifier: Modifier = Modifier,
-    onValueChange: (String) -> Unit = {}
-) {
-    var bill = remember {
-        mutableStateOf("")
-    }
-
-    var isBillValid = remember(bill.value) {
-        bill.value.trim().isNotEmpty()
-    }
-
-    var split by remember {
-        mutableStateOf(1)
-    }
-
-    var tipSlider by remember {
-        mutableStateOf(0f)
-    }
+fun UserForm( onValueChange: (String) -> Unit = {})
+{
+    val bill = remember { mutableStateOf("") }
+    val isBillValid = remember(bill.value) { bill.value.trim().isNotEmpty() }
+    var split by remember { mutableStateOf(0) }
+    var tipSlider by remember { mutableStateOf(0f) }
+    var tip by remember { mutableStateOf(0.0) }
+    val tipAmount = "%.2f".format(tip)
+    var amountPerPerson by remember { mutableStateOf(0.0) }
 
     var tipPercentage = (tipSlider * 100).toInt()
-
-    var tipAmount by remember {
-        mutableStateOf(0.0)
-    }
-
-    var amountPerPerson by remember {
-        mutableStateOf(0.0)
-    }
-
-    var amountPerPersonD = "%.2f".format(amountPerPerson)
-
+    val amountPerPersonD = "%.2f".format(amountPerPerson)
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
 
@@ -260,8 +244,8 @@ fun UserForm(
         modifier = Modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(CornerSize(8.dp)),
-        border = BorderStroke(1.dp, color = colorResource(R.color.teal_blue)) ) {
-
+        border = BorderStroke(1.dp, color = colorResource(R.color.teal_blue)) )
+    {
         Column(modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth()) {
@@ -286,7 +270,7 @@ fun UserForm(
             if (isBillValid) {
 
                 //SPLIT
-                
+
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
@@ -308,21 +292,27 @@ fun UserForm(
                     IconButton(
                         iconImage = painterResource(R.drawable.minus_ic),
                         onClick = {
-                            if (split > 1) {
+                            if (split >= 2) {
                                 split--
                                 amountPerPerson = totalAmountPerPerson(
                                     totalBill = bill.value.toDouble(),
                                     split = split.absoluteValue,
                                     tipPercentage = tipPercentage
                                 )
+                            } else if (split == 1) {
+                                split = 0
+                                tip = 0.0
+                                tipPercentage = 0.0.toInt()
+                                tipSlider = 0.0f
+                                amountPerPerson = 0.0
                             } else {
-                                split = 1
+                                split = 0
                             }
                         })
 
                     Spacer(modifier = Modifier.width(20.dp))
 
-                    Row() {
+                    Row {
                         Image(
                             painter = painterResource(R.drawable.user_ic),
                             contentDescription = "Number of person",
@@ -388,12 +378,16 @@ fun UserForm(
                         Log.d("SliderState", "Slider value: $value ")
                         tipSlider = value
 
-                        tipAmount = totalTipCalculation(bill.value.toDouble(), tipPercentage)
-                        amountPerPerson = totalAmountPerPerson(
-                            totalBill = bill.value.toDouble(),
-                            split = split.absoluteValue,
-                            tipPercentage = tipPercentage
-                        )
+                        if (split > 0) {
+                            tip = totalTipCalculation(bill.value.toDouble(), tipPercentage)
+                            amountPerPerson = totalAmountPerPerson(
+                                totalBill = bill.value.toDouble(),
+                                split = split.absoluteValue,
+                                tipPercentage = tipPercentage
+                            )
+                        } else {
+                            tip = 0.0
+                        }
                     },
                     modifier = Modifier.padding(start = 10.dp, end = 10.dp)
                 )
@@ -403,20 +397,21 @@ fun UserForm(
                 RectangleButton(
                     label = "CONFIRM PAYMENT",
                     onClick = {
+                        bill.value = ""
+                        tip = 0.0
+                        amountPerPerson = 0.0
+                        split = 0
+
                         Toast.makeText(context, "Payment Confirmed", Toast.LENGTH_SHORT).show()
                     }
                 )
             }
-
-
-
-
         }
     }
 }
 
 
-//@Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     TipCalculatorTheme {
