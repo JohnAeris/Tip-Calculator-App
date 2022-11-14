@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tipcalculator.components.InputTextField
 import com.example.tipcalculator.components.IconButton
+import com.example.tipcalculator.components.RectangleButton
 import com.example.tipcalculator.logic.totalAmountPerPerson
 import com.example.tipcalculator.logic.totalTipCalculation
 import com.example.tipcalculator.ui.theme.TipCalculatorTheme
@@ -197,94 +198,7 @@ fun TopContent(
                     )
                 }
             }
-
-
-
-
         }
-
-        /*Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .background(colorResource(R.color.pale_robin))
-        ) {
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                Text(
-                    text = "Total",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-
-                Text(
-                    text = "Bill",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Light
-                )
-
-                Text(
-                    text = "Tip",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Light
-                )
-
-                Text(
-                    text = "Split",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Light
-                )
-
-                Spacer(modifier = Modifier.height(5.dp))
-
-                Text(
-                    text = "Per Person",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-            
-            Spacer(modifier = Modifier.width(20.dp))
-
-            Column(
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                Text(
-                    text = "$ $billA",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Light
-                )
-
-                Text(
-                    text = "$ $tipD",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Light
-                )
-
-                Text(
-                    text = "$split",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Light
-                )
-
-                Spacer(modifier = Modifier.height(5.dp))
-
-                Text(
-                    text = "$ $individualAmount",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-
-                Text(
-                    text = "$ $total",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-        }*/
     }
 }
 
@@ -307,7 +221,7 @@ fun UserForm(
         mutableStateOf("")
     }
 
-    val isBillValid = remember(bill.value) {
+    var isBillValid = remember(bill.value) {
         bill.value.trim().isNotEmpty()
     }
 
@@ -333,6 +247,7 @@ fun UserForm(
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
+
 
     TopContent(
         bill = bill.value,
@@ -360,7 +275,6 @@ fun UserForm(
                 isSingleLine = true,
                 onAction = KeyboardActions {
                     if (!isBillValid) {
-                        Toast.makeText(context, "Input the bill", Toast.LENGTH_SHORT).show()
                         return@KeyboardActions}
                     else {
                         onValueChange(bill.toString().trim())
@@ -482,6 +396,15 @@ fun UserForm(
                         )
                     },
                     modifier = Modifier.padding(start = 10.dp, end = 10.dp)
+                )
+                
+                Spacer(modifier = Modifier.height(30.dp))
+
+                RectangleButton(
+                    label = "CONFIRM PAYMENT",
+                    onClick = {
+                        Toast.makeText(context, "Payment Confirmed", Toast.LENGTH_SHORT).show()
+                    }
                 )
             }
 
