@@ -25,15 +25,26 @@ fun InputTextField(
     state: MutableState<String>,
     label: String,
     enabled: Boolean,
+    ignoredRegex: Regex = Regex("[ ,-]"),
     isSingleLine: Boolean,
     keyboardType: KeyboardType = KeyboardType.Number,
     imeAction: ImeAction = ImeAction.Next,
     onAction: KeyboardActions = KeyboardActions.Default
 ) {
-    
+    val maxInput = 10
+
     OutlinedTextField(
         value = state.value,
-        onValueChange = { state.value = it },
+        onValueChange = {
+                        if (!it.contains(ignoredRegex))
+                            if (it.length <= maxInput) {
+                                val newString = it.filter { char ->
+                                    char == ".".first()
+                                }
+                                if (newString.length <= 1)
+                                    state.value = it
+                            }
+        },
         label = { Text(text = label) },
         leadingIcon = { Icon(
             painter = painterResource(id = R.drawable.dollar_ic),
@@ -47,7 +58,7 @@ fun InputTextField(
         keyboardActions = onAction,
         modifier = Modifier
             .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        maxLines = 1
     )
-    
 }
