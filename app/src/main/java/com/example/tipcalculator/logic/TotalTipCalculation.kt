@@ -1,10 +1,5 @@
 package com.example.tipcalculator.logic
 
-import android.widget.Toast
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import com.example.tipcalculator.MainActivity
-
 
 fun totalTipCalculation(totalBill: Double, tipPercentage: Int): Double {
     return if (totalBill > 1 && totalBill.toString().isNotEmpty()) {
@@ -12,4 +7,9 @@ fun totalTipCalculation(totalBill: Double, tipPercentage: Int): Double {
     } else {
         0.0
     }
+}
+
+fun totalAmountPerPerson(totalBill: Double, split: Int, tipPercentage: Int): Double {
+    val bill = totalTipCalculation(totalBill = totalBill, tipPercentage = tipPercentage)
+    return (bill/split)
 }
