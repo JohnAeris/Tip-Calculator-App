@@ -65,19 +65,32 @@ fun TopContent(
     individualAmount: Double = 0.0
 ) {
 
-    val individualAmountFinal = if (individualAmount.isInfinite() or individualAmount.isNaN()) {
+    var individualAmountFinal = if (individualAmount.isInfinite() or individualAmount.isNaN()) {
         0.0
     } else {
         individualAmount
     }
+
     val billAmount = if (bill.isEmpty()) {
         0.0
     } else {
         bill.toDouble()
     }
+
+    var splitFinal = split
+    var tipFinal = tip
     val total = billAmount + tip.toDouble()
     val totalFinal = "%.2f".format(total)
-    val billFinal = "%.2f".format(billAmount)
+    var billFinal = "%.2f".format(billAmount)
+
+    if (bill.isEmpty()) {
+        billFinal = 0.0.toString()
+        splitFinal = 0
+        tipFinal = 0.0.toString()
+        individualAmountFinal = 0.0
+    } else {
+        //Nothing
+    }
 
     Surface(modifier = Modifier
         .fillMaxWidth()
@@ -179,7 +192,7 @@ fun TopContent(
                     Spacer(modifier = Modifier.height(5.dp))
 
                     Text(
-                        text = "$split",
+                        text = "$splitFinal",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal
                     )
@@ -187,7 +200,7 @@ fun TopContent(
                     Spacer(modifier = Modifier.height(5.dp))
 
                     Text(
-                        text = "$$tip",
+                        text = "$$tipFinal",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal
                     )
