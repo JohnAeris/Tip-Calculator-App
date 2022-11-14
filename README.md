@@ -31,6 +31,6 @@ desired percentage of the total cost of the service, and will display the total 
   <li>Clone the repository.</li>
   <li>Open the repository using Android Studio.</li>
   <li>Create an virtual emulator in Android Studio using your preferred settings or use physical device (<b>Highly Recommended<b>).</li>
-  <li>Run the mobile application.</li>
+  <li>Run the mobile application. </li>
 </ol>
 
